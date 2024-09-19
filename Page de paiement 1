@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page de Paiement - Mobile Money & PayPal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        .description {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        .payment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-size: 16px;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .payment-methods {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .payment-methods img {
+            width: 120px;
+            margin: 0 10px;
+        }
+    </style>
+    <!-- PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Paiement sécurisé</h2>
+    <p class="description">Merci de renseigner vos informations pour finaliser votre paiement via Mobile Money ou PayPal.</p>
+    
+    <form class="payment-form" action="https://paydunya.com/sandbox-checkout" method="POST">
+        <label for="nom">Nom complet :</label>
+        <input type="text" id="nom" name="nom" required placeholder="Votre nom complet">
+
+        <label for="montant">Montant à payer (FCFA) :</label>
+        <input type="number" id="montant" name="montant" required placeholder="Ex: 5000 FCFA">
+
+        <label for="mobile">Numéro Mobile Money :</label>
+        <input type="text" id="mobile" name="mobile" required placeholder="Ex: +229 97 00 00 00">
+
+        <input type="hidden" name="invoice" value="12345"> <!-- ID de facture générée côté serveur -->
+        <input type="submit" value="Payer avec Mobile Money">
+    </form>
+
+    <div class="payment-methods">
+        <p>Moyens de paiement acceptés :</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/MTN_Logo.svg" alt="MTN Mobile Money">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Orange_logo.svg" alt="Orange Money">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Moov_Africa_Logo_2020.svg" alt="Moov Money">
+    </div>
+
+    <div class="payment-methods">
+        <p>Ou payer avec PayPal :</p>
+        <div id="paypal-button-container"></div>
+    </div>
+</div>
+
+<!-- PayPal Button Integration -->
+<script>
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '10.00' // Montant par défaut, à adapter
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                alert('Paiement complété avec succès par ' + details.payer.name.given_name);
+                // Ici, tu peux rediriger ou exécuter d'autres actions après le paiement
+            });
+        }
+    }).render('#paypal-button-container'); // Affiche le bouton PayPal
+</script>
+
+</body>
+</html>
